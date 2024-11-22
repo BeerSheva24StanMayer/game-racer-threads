@@ -1,36 +1,26 @@
 package telran.multithreading;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Random;
 
-public class Racer extends Thread{
-    private Race race;
-    private int number;
-    private static AtomicReference<Racer> winner = new AtomicReference<>();
-    
-
-    public Racer(Race race, int number) {
-        this.race = race;
-        this.number = number;
-    }
-
-    public void run(){
-        for (int lap = 1; lap < race.getDistance(); lap++) {
-            try {
-                Thread.sleep(race.getSleepTime());
-            } catch (InterruptedException e) {
-                
-            }
-            System.out.println("Racer " + number + " on the lap " + lap);
-        }
-        if (winner.compareAndSet(null, this)) {
-            System.out.println("Racer " + number + " has finished the race first");
-        }
-        else {
-            System.out.println("Racer " + number + " finished the race");
-        }
-    }
-    
-    public static int getWinner() {
-        return winner.get().number;
-    }
+public class Racer extends Thread {
+private Race race;
+private int number;
+public Racer(Race race, int number) {
+	this.race = race;
+	this.number = number;
+}
+@Override
+public void run() {
+	int minSleep = race.getMinSleep();
+	int maxSleep = race.getMaxSleep();
+	int distance = race.getDistance();
+	Random random = new Random();
+	for (int i = 0; i < distance; i++) {
+		try {
+			sleep(random.nextInt(minSleep, maxSleep + 1));
+			System.out.printf("%d - step %d\n",number, i);
+		} catch (InterruptedException e) {}
+	}
+	race.winner.compareAndSet(-1, number);
+}
 }
