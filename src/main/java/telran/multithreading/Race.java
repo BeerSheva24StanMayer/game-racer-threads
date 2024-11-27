@@ -1,30 +1,30 @@
-
 package telran.multithreading;
 
-import java.time.Duration;
-import java.time.LocalTime;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.locks.*;
 
 public class Race {
 	private int distance;
 	private int minSleep;
 	private int maxSleep;
-    private List<Integer[]> finishOrder = new ArrayList<>();
-    private LocalTime raceStartTime;
-
-
-	public Race(int distance, int minSleep, int maxSleep) {
+	private ArrayList<Racer> resultsTable;
+	private Instant startTime;
+	Lock lock = new ReentrantLock(true);
+	public Race(int distance, int minSleep, int maxSleep, ArrayList<Racer> resultsTable, Instant startTime) {
 		this.distance = distance;
 		this.minSleep = minSleep;
 		this.maxSleep = maxSleep;
+		this.resultsTable = resultsTable;
+		this.startTime = startTime;
+	}
+	public ArrayList<Racer> getResultsTable() {
+		return resultsTable;
+	}
+	public Instant getStartTime() {
+		return startTime;
 	}
 	
-    public static LocalTime getStartTime(LocalTime raceStartTime) {
-        raceStartTime = LocalTime.now();
-        return raceStartTime;
-    }
-
 	public int getDistance() {
 		return distance;
 	}
@@ -35,17 +35,4 @@ public class Race {
 		return maxSleep;
 	}
 	
-    public void setRaceStart (LocalTime raceStartTime) {
-        this.raceStartTime = raceStartTime;
-    }
-
-    public void addRacer (int number) {
-        long raceTime = Duration.between(raceStartTime, LocalTime.now()).toMillis();
-        Integer[] racer = {number, (int) raceTime};
-        finishOrder.add(racer);
-    }
-
-    public List<Integer[]> getFinishOrder () {
-        return new ArrayList<>(finishOrder);
-    }
 }
